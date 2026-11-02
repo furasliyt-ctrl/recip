@@ -237,69 +237,76 @@ document.getElementById('outputContainer').scrollIntoView({behavior:'smooth'});
 }
 
 async function handleFetchDirectAnswer() {
-const prompt = getPromptContent();
-let apiKey = document.getElementById('apiKeyInput').value.trim();
+    const grade = document.getElementById('gradeLevel').value;
+    const subject = document.getElementById('subject').value;
+    const topic = document.getElementById('topicInput').value.trim();
+    const taskSelect = document.getElementById('taskType');
+    const task = taskSelect.options[taskSelect.selectedIndex]?.text || '';
 
-if(!apiKey) {
-    apiKey = localStorage.getItem('miran_api_key') || '';
-}
-
-if(!prompt) {
-    alert('يرجى كتابة السؤال أو الموضوع أولاً!');
-    return;
-}
-
-if(!apiKey) {
-    alert('يرجى إدخال مفتاح Google AI Studio في الحقل المخصص أعلى الصفحة لتفعيل جلب الشرح من المنهج!');
-    document.getElementById('apiKeyInput').scrollIntoView({behavior:'smooth'});
-    return;
-}
-
-saveApiKey();
-
-const container = document.getElementById('answerContainer');
-const answer = document.getElementById('answerText');
-const badge = document.getElementById('loadingBadge');
-const button = document.getElementById('answerButton');
-
-document.getElementById('outputContainer').classList.add('hidden');
-container.classList.remove('hidden');
-badge.classList.remove('hidden');
-button.disabled = true;
-
-answer.textContent = 'جاري جلب الشرح والجواب العلمي المعتمد من المنهج المدرسي...';
-container.scrollIntoView({behavior:'smooth'});
-
-try {
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
-    
-    const response = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            contents: [{ parts: [{ text: prompt }] }]
-        })
-    });
-
-    const data = await response.json();
-
-    if(!response.ok) {
-        throw new Error(data.error?.message || 'تأكد من صحة المفتاح المُدخل.');
+    if (!topic) {
+        alert('يرجى كتابة السؤال أو الموضوع أولاً!');
+        return;
     }
 
-    if (data.candidates && data.candidates[0].content.parts[0].text) {
-        answer.textContent = data.candidates[0].content.parts[0].text;
-    } else {
-        throw new Error('لم تتوفر استجابة نصية صالحة.');
-    }
+    const container = document.getElementById('answerContainer');
+    const answer = document.getElementById('answerText');
+    const badge = document.getElementById('loadingBadge');
+    const button = document.getElementById('answerButton');
 
-} catch(error) {
-    answer.textContent = `❌ تعذر جلب الإجابة من المنهج: ${error.message}\n\nيرجى التأكد من صحة مفتاح API أو الاتصال بالإنترنت.`;
-} finally {
-    badge.classList.add('hidden');
-    button.disabled = false;
-}
-}
+    document.getElementById('outputContainer').classList.add('hidden');
+    container.classList.remove('hidden');
+    badge.classList.remove('hidden');
+    button.disabled = true;
+
+    answer.textContent = 'جاري الاتصال بخادم منصة مِران...';
+    container.scrollIntoView({ behavior: 'smooth' });
+
+    try {
+        const response = await fetch(
+            'https://miran-server.bonto.run/api/ask',
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    question: `${task}\nالموضوع أو السؤال: ${topic}`,
+                    grade: grade,
+                    subject: subject,
+                    sources: []
+                })
+            }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(
+                data.error || data.message ||
+                'تعذر الحصول على الإجابة من الخادم.'
+            );
+        }
+
+        const result =
+            data.answer ||
+            data.text ||
+            data.response;
+
+        if (!result) {
+            throw new Error('وصل رد الخادم دون نص للإجابة.');
+        }
+
+        answer.textContent = result;
+
+    } catch (error) {
+        answer.textContent =
+            '❌ تعذر الحصول على الإجابة.\n\n' +
+            error.message +
+            '\n\nيرجى المحاولة لاحقاً أو التأكد من اتصال الخادم.';
+    } finally {
+        badge.classList.add('hidden');
+        button.disabled = false;
+    }
 
 window.addEventListener('DOMContentLoaded', () => {
     updateTasksDropdown();
