@@ -203,7 +203,42 @@ option.textContent=task.text;
 select.appendChild(option);
 });
 }
+async function copyText(text) {
+    if (!text) {
+        alert('لا يوجد نص لنسخه!');
+        return;
+    }
 
+    try {
+        if (navigator.clipboard && window.isSecureContext) {
+            await navigator.clipboard.writeText(text);
+        } else {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.style.position = 'fixed';
+            textarea.style.opacity = '0';
+            document.body.appendChild(textarea);
+            textarea.select();
+            textarea.setSelectionRange(0, textarea.value.length);
+
+            const success = document.execCommand('copy');
+            textarea.remove();
+
+            if (!success) {
+                throw new Error('تعذر نسخ النص');
+            }
+        }
+
+        alert('✅ تم نسخ النص بنجاح');
+    } catch (error) {
+        alert('تعذر النسخ. حاول مرة أخرى.');
+    }
+}
+
+function copyPromptText() {
+    const text = document.getElementById('resultText').textContent;
+    copyText(text);
+}
 function getPromptContent() {
 const grade=document.getElementById('gradeLevel').value;
 const subject=document.getElementById('subject').value;
