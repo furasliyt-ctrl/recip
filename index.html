@@ -54,16 +54,14 @@ class="px-5 py-3 rounded-xl font-bold shadow-md bg-white text-slate-700 border">
 
 <section class="bg-white rounded-2xl shadow-xl p-6 md:p-8 mb-8 border border-indigo-100">
 
-<!-- حقل المفتاح مع خيار الحفظ -->
 <div class="mb-6 p-4 bg-indigo-50 rounded-xl border border-indigo-200">
-    <label class="block font-bold mb-2 text-indigo-900 text-sm">
-        🔑 أدخل مفتاح Google AI Studio الخاص بك مرة واحدة فقط:
-    </label>
-    <input id="apiKeyInput" type="password" onchange="saveApiKey()"
-    placeholder="ألصق مفتاح الـ API هنا..."
-    class="w-full p-3 rounded-xl border border-indigo-300 bg-white text-sm font-mono focus:outline-none focus:ring-2 focus:ring-indigo-500">
+    <p class="font-bold text-indigo-900 text-sm">
+        🔒 اتصال آمن بخادم منصة مِران
+    </p>
+    <p class="text-sm text-slate-600 mt-2">
+        يتم الاتصال بالخادم التعليمي مباشرة، ولا تحتاج إلى إدخال مفتاح API.
+    </p>
 </div>
-
 <div class="mb-4">
 <label class="block font-semibold mb-2">الصف الدراسي:</label>
 <select id="gradeLevel" class="w-full p-3 rounded-xl border">
@@ -174,19 +172,8 @@ student: [
 
 let currentMode='teacher';
 
-function saveApiKey() {
-    const key = document.getElementById('apiKeyInput').value.trim();
-    if(key) {
-        localStorage.setItem('miran_api_key', key);
-    }
-}
 
-function loadApiKey() {
-    const savedKey = localStorage.getItem('miran_api_key');
-    if(savedKey) {
-        document.getElementById('apiKeyInput').value = savedKey;
-    }
-}
+
 
 function setMode(mode) {
 currentMode=mode;
