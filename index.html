@@ -303,14 +303,15 @@ async function handleFetchDirectAnswer() {
             '❌ تعذر الحصول على الإجابة.\n\n' +
             error.message +
             '\n\nيرجى المحاولة لاحقاً أو التأكد من اتصال الخادم.';
-    } finally {
+     } finally {
         badge.classList.add('hidden');
         button.disabled = false;
     }
+}
 
 window.addEventListener('DOMContentLoaded', () => {
     updateTasksDropdown();
-});
+});   
 </script>
 
 </body>
