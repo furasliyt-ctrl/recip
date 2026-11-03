@@ -238,6 +238,9 @@ async function copyText(text) {
 function copyPromptText() {
     const text = document.getElementById('resultText').textContent;
     copyText(text);
+}function copyAnswerText() {
+    const text = document.getElementById('answerText').textContent;
+    copyText(text);
 }
 function getPromptContent() {
 const grade=document.getElementById('gradeLevel').value;
