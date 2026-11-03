@@ -316,7 +316,26 @@ async function handleFetchDirectAnswer() {
             }
         );
 
-        const data = await response.json();
+      const response = await fetch('https://miran.bonto.run/api/answer', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+        prompt: `الصف الدراسي: ${grade}
+المادة: ${subject}
+المهمة: ${task}
+السؤال أو الموضوع: ${topic}`
+    })
+});
+
+const data = await response.json();
+
+if (!response.ok) {
+    throw new Error(data.error || 'حدث خطأ في الاتصال بالخادم');
+}
+
+const answer = data.answer || data.text || data.response;  
 
         if (!response.ok) {
             throw new Error(
