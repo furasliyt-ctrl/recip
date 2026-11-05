@@ -297,35 +297,16 @@ async function handleFetchDirectAnswer() {
     button.disabled = true;
     answer.textContent = 'جاري البحث في المنهج الدراسي...';
 
-    try {
-        const response = await fetch(
-            const response = await fetch(
-    'https://miran-server.bonto.run/api/answer',
-    {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            prompt: `الصف: ${grade}\nالمادة: ${subject}\nالمهمة: ${task}\nالسؤال: ${topic}`
-        })
-    }
-);
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    question: `${task}\n${topic}`,
-                    grade: grade,
-                    subject: subject,
-                    sources: []
-                })
-            }
-        );
+        try {
+        const response = await fetch('https://miran-server.bonto.run/api/answer', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                prompt: `الصف: ${grade}\nالمادة: ${subject}\nالمهمة: ${task}\nالسؤال: ${topic}`
+            })
+        });
 
         const data = await response.json();
-
         if (!response.ok) {
             throw new Error(data.error || 'خطأ في الخادم');
         }
