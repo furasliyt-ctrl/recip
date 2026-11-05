@@ -299,8 +299,18 @@ async function handleFetchDirectAnswer() {
 
     try {
         const response = await fetch(
-            'https://miran-server.bonto.run/api/ask',
-            {
+            const response = await fetch(
+    'https://miran-server.bonto.run/api/answer',
+    {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            prompt: `الصف: ${grade}\nالمادة: ${subject}\nالمهمة: ${task}\nالسؤال: ${topic}`
+        })
+    }
+);
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
